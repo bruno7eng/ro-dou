@@ -1,22 +1,23 @@
 services:
-  # O nome deste serviço é 'airflow'. O n8n vai usar este nome para conectar.
-  airflow:
+  # SERVIÇO 1: O Cérebro (Webserver + Banco + Usuário)
+  airflow-webserver:
     build:
       context: .
       dockerfile: Dockerfile
     restart: always
+    # O PULO DO GATO: Este comando inicializa o banco, cria o admin e só depois sobe o servidor.
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow users create --username admin --password admin --firstname Admin --lastname System --role Admin --email admin@rodou.gov.br || true &&
+      airflow webserver"
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
-      - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__FERNET_KEY=Uqv6pwYWJn7xifR3QAkifMTkupos8mkxaQL2Q7Ydsqw=
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
-      # AJUSTE AQUI: Define a URL interna correta para links e redirects
-      - AIRFLOW__WEBSERVER__BASE_URL=http://airflow:8080
-      - AIRFLOW__API__AUTH_BACKEND=airflow.api.auth.backend.basic_auth
-      # Credenciais
-      - _AIRFLOW_WWW_USER_CREATE=true
-      - _AIRFLOW_WWW_USER_USERNAME=admin
-      - _AIRFLOW_WWW_USER_PASSWORD=admin 
+      - AIRFLOW__WEBSERVER__BASE_URL=http://airflow-webserver:8080
+      - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
       # Variáveis do ro-DOU
       - RO_DOU__DAG_CONF_DIR=/opt/airflow/dags/ro_dou/dag_confs
       - AIRFLOW_VAR_PATH_TMP=/tmp
@@ -27,15 +28,39 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
-    # Mantemos a porta exposta para você conseguir debugar se precisar (acessando IP-DA-VPS:8080)
-    # Se quiser bloquear totalmente externo, remova estas linhas de ports.
-    #ports:
-    #  - "8090:8080"
+    # Mapeando a porta externa 8090 para a 8080 do container
+    ports:
+      - "8090:8080"
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 30s
-      retries: 3
+      timeout: 30s
+      retries: 5
+      start_period: 180s
 
+  # SERVIÇO 2: O Operário (Scheduler)
+  airflow-scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: airflow scheduler
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
+      - AIRFLOW__CORE__FERNET_KEY=Uqv6pwYWJn7xifR3QAkifMTkupos8mkxaQL2Q7Ydsqw=
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - RO_DOU__DAG_CONF_DIR=/opt/airflow/dags/ro_dou/dag_confs
+      - AIRFLOW_VAR_PATH_TMP=/tmp
+      - AIRFLOW_VAR_EMAIL_ADMIN=admin@rodou.gov.br
+      - AIRFLOW_CONN_INLABS_DB=postgres://airflow:airflow@postgres:5432/airflow?schema=inlabs
+    volumes:
+      - airflow_logs:/opt/airflow/logs
+    depends_on:
+      airflow-webserver:
+        condition: service_healthy
+
+  # SERVIÇO 3: Banco de Dados
   postgres:
     image: postgres:13
     restart: always
@@ -51,6 +76,7 @@ services:
       interval: 10s
       retries: 5
 
+  # SERVIÇO 4: SMTP Fake
   smtp4dev:
     image: rnwood/smtp4dev:v3
     restart: always
