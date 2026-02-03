@@ -13,6 +13,7 @@ services:
       airflow webserver"
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__DEFAULT_TIMEZONE=America/Sao_Paulo
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__FERNET_KEY=Uqv6pwYWJn7xifR3QAkifMTkupos8mkxaQL2Q7Ydsqw=
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
@@ -47,6 +48,7 @@ services:
     command: airflow scheduler
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__CORE__DEFAULT_TIMEZONE=America/Sao_Paulo
       - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
       - AIRFLOW__CORE__FERNET_KEY=Uqv6pwYWJn7xifR3QAkifMTkupos8mkxaQL2Q7Ydsqw=
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
@@ -80,8 +82,28 @@ services:
   smtp4dev:
     image: rnwood/smtp4dev:v3
     restart: always
-    ports:
-      - "5001:80"
+    #ports:
+    #  - "5001:80"
+    environment:
+      - ServerOptions__HostName=smtp4dev
+    # NÃO use ports (5001:80) se for usar domínio, para evitar conflito.
+    # O Traefik acessa a porta interna (80) diretamente.
+    expose:
+      - "80"
+      - "25"
+    labels:
+      - "traefik.enable=true"
+      # Define que este container responde EXCLUSIVAMENTE por este domínio
+      - "traefik.http.routers.smtp4dev.rule=Host(`airflowsmtp4dev.vps.avaliadoc.com.br`)"
+      # Define que a porta para a Interface Web é a 80 (não a 25)
+      - "traefik.http.services.smtp4dev.loadbalancer.server.port=80"
+      # Configurações padrão do Coolify para HTTPS (entrypoint https/websecure)
+      - "traefik.http.routers.smtp4dev.entrypoints=websecure"
+      - "traefik.http.routers.smtp4dev.tls.certresolver=letsencrypt"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      retries: 3  
 
 volumes:
   postgres_data:
