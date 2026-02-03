@@ -1,23 +1,38 @@
-dag_id: "monitoramento_hoper"
-# Agenda: Todo dia às 07:00
-schedule_interval: "0 7 * * *"
-tags: ["hoper", "mec", "regulação"]
+dag:
+  id: monitoramento_hoper
+  description: "Monitoramento de Regulação MEC e Hoper"
+  schedule: "0 7 * * *"
+  tags:
+    - hoper
+    - mec
+    - regulacao
 
-groups:
-  - name: "regulacao_cursos"
-    search_terms:
-      - "Ministério da Educação"
-      - "Secretaria de Regulação e Supervisão da Educação Superior"
-    # Use 'match_mode: all' se quiser que apareçam AMBOS os termos
-    # Use 'match_mode: any' se quiser QUALQUER UM dos termos
-    match_mode: "any"
+  # No Ro-DOU, 'search' é uma lista. Cada item da lista é um bloco de busca.
+  search:
+    - header: "Regulação MEC e Hoper"
+      sources:
+        - DOU
+      # Seção do DOU (Opcional, padrão é TODOS)
+      dou_sections:
+        - SECAO_1
+        - EDICAO_EXTRA
+      # Lista de termos para buscar. O Ro-DOU vai trazer publicações que contenham esses termos.
+      terms:
+        - "Ministério da Educação"
+        - "Secretaria de Regulação e Supervisão da Educação Superior"
+        - "Autorização de curso"
+        - "Reconhecimento de curso"
+        - "Hoper"
 
-    # Filtros: Só traz a publicação se tiver uma dessas palavras NO TEXTO
-    filters:
-      - "Autorização de curso"
-      - "Reconhecimento de curso"
-      - "Hoper"
+      # Opcional: Ignorar publicações que contenham estes termos
+      # terms_ignore:
+      #   - "Termo que não quero"
 
-    # Se quiser enviar email, descomente e ajuste:
-    # email_on_success: true
-    # emails: ['seu.email@exemplo.com']
+  report:
+    # Configure seu e-mail aqui
+    emails:
+      - seu.email@exemplo.com
+    subject: "Relatório Diário - Hoper/MEC"
+    attach_csv: True
+    # Pula o envio se não achar nada
+    skip_null: True
