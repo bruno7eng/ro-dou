@@ -23,6 +23,8 @@ class WebhookSender(ISender):
 
     def _serialize(self, obj):
         """Serializa objetos complexos para JSON"""
+        if isinstance(obj, (dict, list)):
+            return obj
         if hasattr(obj, 'dict'): 
             return obj.dict()
         if hasattr(obj, 'model_dump'):
@@ -60,6 +62,8 @@ class WebhookSender(ISender):
                             match_data = self._serialize(match)
                             if not isinstance(match_data, dict):
                                 match_data = {"value": match_data}
+                            else:
+                                match_data = dict(match_data)
                             match_data.update(
                                 {
                                     "group": group,
