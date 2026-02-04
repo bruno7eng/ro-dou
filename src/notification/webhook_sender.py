@@ -27,7 +27,7 @@ class WebhookSender(ISender):
             return obj.isoformat()
         return str(obj) # Último recurso: transforma em texto
 
-    def send_report(self, search_report: Dict[str, Any], report_date: str):
+    def send(self, search_report: Dict[str, Any], report_date: str):
         """
         Envia os dados já "mastigados" para o n8n.
         """
@@ -62,8 +62,7 @@ class WebhookSender(ISender):
         }
 
         try:
-            # Usamos json.dumps com o default=self._serialize para garantir
-            # que nada quebre na conversão
+            # Usamos json.dumps com o default=self._serialize para garantir que nada quebre na conversão
             json_payload = json.dumps(payload, default=self._serialize)
 
             self.logger.info(f"Enviando {len(all_matches)} itens para n8n...")
