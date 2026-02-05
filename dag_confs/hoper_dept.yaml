@@ -1,13 +1,13 @@
 dag:
-  id: hoper_dept
-  description: Monitoramento de Regulação MEC (geral)
+  id: hoper_orgaomec
+  description: Monitoramento de Regulação MEC
   tags:
     - hoper
     - mec
   #  owner:
   #    - pessoa 1
   #    - pessoa 2
-  schedule: "*/30 2-6 * * MON-FRI"
+  schedule: "*/30 2-23 * * MON-FRI"
   callback:
     on_failure_callback:
       - seu.email@exemplo.com
@@ -17,6 +17,140 @@ dag:
     # Lista de termos para buscar. O Ro-DOU vai trazer publicações que contenham esses termos.
     department:
       - Ministério da Educação
+    department_ignore:
+      - Ministério da Educação/Centro Federal de Educação Tecnológica Celso Suckow da Fonseca
+      - Ministério da Educação/Centro Federal de Educação Tecnológica de Minas Gerais
+      - Ministério da Educação/Colégio Pedro II
+      - Ministério da Educação/Conselho Nacional de Educação/Câmara de Educação Básica
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/EBSERH - Filial Hospital Escola da UFPel
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/EBSERH - Filial Hospital Universitário da UFRR
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital das Clínicas da UFG
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital das Clínicas da UFPE
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital de Clínicas de Uberlândia
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Alcides Carneiro
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Cassiano Antonio Moraes
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário de Juiz de Fora
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Dr. Miguel Riet Côrrea Júnior
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário em São Luís
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Gaffrée e Guinle
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Júlio Muller
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Onofre Lopes
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Prof. Alberto Antunes
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Professor Edgard Santos
+      - Ministério da Educação/Empresa Brasileira de Serviços Hospitalares/Filial Hospital Universitário Walter Cantídio
+      - Ministério da Educação/Fundação Joaquim Nabuco
+      - Ministério da Educação/Fundação Universidade de Brasília
+      - Ministério da Educação/Fundação Universidade do Amazonas
+      - Ministério da Educação/Fundação Universidade Federal da Grande Dourados
+      - Ministério da Educação/Fundação Universidade Federal de Ciências da Saúde de Porto Alegre
+      - Ministério da Educação/Fundação Universidade Federal de Mato Grosso
+      - Ministério da Educação/Fundação Universidade Federal de Ouro Preto
+      - Ministério da Educação/Fundação Universidade Federal de Pelotas
+      - Ministério da Educação/Fundação Universidade Federal de Rondônia
+      - Ministério da Educação/Fundação Universidade Federal de Roraima
+      - Ministério da Educação/Fundação Universidade Federal de São Carlos
+      - Ministério da Educação/Fundação Universidade Federal de São João Del Rei
+      - Ministério da Educação/Fundação Universidade Federal de Sergipe
+      - Ministério da Educação/Fundação Universidade Federal de Viçosa
+      - Ministério da Educação/Fundação Universidade Federal do ABC
+      - Ministério da Educação/Fundação Universidade Federal do Acre
+      - Ministério da Educação/Fundação Universidade Federal do Amapá
+      - Ministério da Educação/Fundação Universidade Federal do Maranhão
+      - Ministério da Educação/Fundação Universidade Federal do Mato Grosso do Sul
+      - Ministério da Educação/Fundação Universidade Federal do Pampa
+      - Ministério da Educação/Fundação Universidade Federal do Piauí
+      - Ministério da Educação/Fundação Universidade Federal do Rio Grande
+      - Ministério da Educação/Fundação Universidade Federal do Tocantins
+      - Ministério da Educação/Fundação Universidade Federal do Vale do São Francisco
+      - Ministério da Educação/Fundo Nacional de Desenvolvimento da Educação
+      - Ministério da Educação/Hospital de Clínicas de Porto Alegre
+      - Ministério da Educação/Instituto Benjamin Constant
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Baiano
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Catarinense
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia da Bahia
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia da Paraíba
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Alagoas
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Brasília
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Goiás
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Mato Grosso
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Mato Grosso do Sul
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Minas Gerais
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Pernambuco
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Rondônia
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Roraima
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Santa Catarina
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de São Paulo
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia de Sergipe
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Acre
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Amapá
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Amazonas
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Ceará
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Espírito Santo
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Maranhão
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Norte de Minas Gerais
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Pará
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Paraná
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Piauí
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Rio de Janeiro
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Norte
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Rio Grande do Sul
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Sertão Pernambucano
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Sudeste de Minas Gerais
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Sul de Minas Gerais
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Tocantins
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia do Triângulo Mineiro
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Farroupilha
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Fluminense
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Goiano
+      - Ministério da Educação/Instituto Federal de Educação, Ciência e Tecnologia Sul-Rio-Grandense
+      - Ministério da Educação/Instituto Nacional de Educação de Surdos
+      - Ministério da Educação/Secretaria de Educação Básica
+      - Ministério da Educação/Universidade da Integração Internacional da Lusofonia Afro-Brasileira
+      - Ministério da Educação/Universidade Federal da Bahia
+      - Ministério da Educação/Universidade Federal da Fronteira Sul
+      - Ministério da Educação/Universidade Federal da Integração Latino-Americana
+      - Ministério da Educação/Universidade Federal da Paraíba
+      - Ministério da Educação/Universidade Federal de Alagoas
+      - Ministério da Educação/Universidade Federal de Alfenas
+      - Ministério da Educação/Universidade Federal de Campina Grande
+      - Ministério da Educação/Universidade Federal de Catalão
+      - Ministério da Educação/Universidade Federal de Goiás
+      - Ministério da Educação/Universidade Federal de Itajubá
+      - Ministério da Educação/Universidade Federal de Jataí
+      - Ministério da Educação/Universidade Federal de Juiz de Fora
+      - Ministério da Educação/Universidade Federal de Lavras
+      - Ministério da Educação/Universidade Federal de Minas Gerais
+      - Ministério da Educação/Universidade Federal de Pernambuco
+      - Ministério da Educação/Universidade Federal de Rondonópolis
+      - Ministério da Educação/Universidade Federal de Santa Catarina
+      - Ministério da Educação/Universidade Federal de Santa Maria
+      - Ministério da Educação/Universidade Federal de São Paulo
+      - Ministério da Educação/Universidade Federal de Uberlândia
+      - Ministério da Educação/Universidade Federal do Agreste de Pernambuco
+      - Ministério da Educação/Universidade Federal do Cariri
+      - Ministério da Educação/Universidade Federal do Ceará
+      - Ministério da Educação/Universidade Federal do Delta do Parnaíba
+      - Ministério da Educação/Universidade Federal do Espírito Santo
+      - Ministério da Educação/Universidade Federal do Estado do Rio de Janeiro
+      - Ministério da Educação/Universidade Federal do Norte do Tocantins
+      - Ministério da Educação/Universidade Federal do Oeste da Bahia
+      - Ministério da Educação/Universidade Federal do Oeste do Pará
+      - Ministério da Educação/Universidade Federal do Pará
+      - Ministério da Educação/Universidade Federal do Paraná
+      - Ministério da Educação/Universidade Federal do Recôncavo da Bahia
+      - Ministério da Educação/Universidade Federal do Rio de Janeiro
+      - Ministério da Educação/Universidade Federal do Rio Grande do Norte
+      - Ministério da Educação/Universidade Federal do Rio Grande do Sul
+      - Ministério da Educação/Universidade Federal do Sul da Bahia
+      - Ministério da Educação/Universidade Federal do Sul e Sudeste do Pará
+      - Ministério da Educação/Universidade Federal do Triângulo Mineiro
+      - Ministério da Educação/Universidade Federal dos Vales do Jequitinhonha e Mucuri
+      - Ministério da Educação/Universidade Federal Fluminense
+      - Ministério da Educação/Universidade Federal Rural da Amazônia
+      - Ministério da Educação/Universidade Federal Rural de Pernambuco
+      - Ministério da Educação/Universidade Federal Rural do Rio de Janeiro
+      - Ministério da Educação/Universidade Federal Rural do Semi-Árido
+      - Ministério da Educação/Universidade Tecnológica Federal do Paraná
     # Opcional: Ignorar publicações que contenham estes termos
     # terms_ignore:
     #  - Sanções Administrativas
@@ -24,12 +158,10 @@ dag:
     is_exact_search: True
     ignore_signature_match: True
     force_rematch: True
-    date: MES
+    date: DIA
     # Seção do DOU (Opcional, padrão é TODOS)
     dou_sections:
-      - SECAO_1
-      - EDICAO_SUPLEMENTAR
-      - EDICAO_EXTRA
+      - TODOS
     full_text: True
     use_summary: True
     text_length: 400
