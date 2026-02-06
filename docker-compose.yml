@@ -5,11 +5,10 @@ services:
       context: .
       dockerfile: Dockerfile
     restart: always
-    # O PULO DO GATO: Este comando inicializa o banco, cria o admin e só depois sobe o servidor.
     command: >
       bash -c "
       airflow db migrate &&
-      airflow users create --username admin --password admin --firstname Admin --lastname System --role Admin --email admin@rodou.gov.br || true &&
+      airflow users create --username admin --password admin --firstname Admin --lastname System --role Admin --email ${GMAIL_USER} || true &&
       airflow webserver"
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
@@ -22,21 +21,25 @@ services:
       # Variáveis do ro-DOU
       - RO_DOU__DAG_CONF_DIR=/opt/airflow/dags/ro_dou/dag_confs
       - AIRFLOW_VAR_PATH_TMP=/tmp
-      - AIRFLOW_VAR_EMAIL_ADMIN=admin@rodou.gov.br
+      - AIRFLOW_VAR_EMAIL_ADMIN=${GMAIL_USER}
       - AIRFLOW_CONN_INLABS_DB=postgres://airflow:airflow@postgres:5432/airflow?schema=inlabs
-      - AIRFLOW__SMTP__SMTP_HOST=smtp4dev
-      - AIRFLOW__SMTP__SMTP_PORT=25
-      - AIRFLOW__SMTP__SMTP_MAIL_FROM=airflow@rodou.local
-      - AIRFLOW__SMTP__SMTP_USER=
-      - AIRFLOW__SMTP__SMTP_PASSWORD=
+      
+      # --- CONFIGURAÇÃO DO GMAIL (Variáveis de Ambiente) ---
+      - AIRFLOW__EMAIL__EMAIL_BACKEND=airflow.utils.email.send_email_smtp
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_STARTTLS=true
       - AIRFLOW__SMTP__SMTP_SSL=false
-      - AIRFLOW__SMTP__SMTP_STARTTLS=false
+      - AIRFLOW__SMTP__SMTP_USER=${GMAIL_USER}
+      - AIRFLOW__SMTP__SMTP_PASSWORD=${GMAIL_APP_PASS}
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=${GMAIL_USER}
+      # -----------------------------------------------------
+
     volumes:
       - airflow_logs:/opt/airflow/logs
     depends_on:
       postgres:
         condition: service_healthy
-    # Mapeando a porta externa 8090 para a 8080 do container
     ports:
       - "8090:8080"
     healthcheck:
@@ -61,15 +64,20 @@ services:
       - AIRFLOW__CORE__LOAD_EXAMPLES=false
       - RO_DOU__DAG_CONF_DIR=/opt/airflow/dags/ro_dou/dag_confs
       - AIRFLOW_VAR_PATH_TMP=/tmp
-      - AIRFLOW_VAR_EMAIL_ADMIN=admin@rodou.gov.br
+      - AIRFLOW_VAR_EMAIL_ADMIN=${GMAIL_USER}
       - AIRFLOW_CONN_INLABS_DB=postgres://airflow:airflow@postgres:5432/airflow?schema=inlabs
-      - AIRFLOW__SMTP__SMTP_HOST=smtp4dev
-      - AIRFLOW__SMTP__SMTP_PORT=25
-      - AIRFLOW__SMTP__SMTP_MAIL_FROM=airflow@rodou.local
-      - AIRFLOW__SMTP__SMTP_USER=
-      - AIRFLOW__SMTP__SMTP_PASSWORD=
+      
+      # --- CONFIGURAÇÃO DO GMAIL (Replicar aqui também) ---
+      - AIRFLOW__EMAIL__EMAIL_BACKEND=airflow.utils.email.send_email_smtp
+      - AIRFLOW__SMTP__SMTP_HOST=smtp.gmail.com
+      - AIRFLOW__SMTP__SMTP_PORT=587
+      - AIRFLOW__SMTP__SMTP_STARTTLS=true
       - AIRFLOW__SMTP__SMTP_SSL=false
-      - AIRFLOW__SMTP__SMTP_STARTTLS=false
+      - AIRFLOW__SMTP__SMTP_USER=${GMAIL_USER}
+      - AIRFLOW__SMTP__SMTP_PASSWORD=${GMAIL_APP_PASS}
+      - AIRFLOW__SMTP__SMTP_MAIL_FROM=${GMAIL_USER}
+      # ----------------------------------------------------
+
     volumes:
       - airflow_logs:/opt/airflow/logs
     depends_on:
@@ -91,33 +99,6 @@ services:
       test: ["CMD-SHELL", "pg_isready -U airflow"]
       interval: 10s
       retries: 5
-
-  # SERVIÇO 4: SMTP Fake
-  smtp4dev:
-    image: rnwood/smtp4dev:v3
-    restart: always
-    #ports:
-    #  - "5001:80"
-    environment:
-      - ServerOptions__HostName=smtp4dev
-    # NÃO use ports (5001:80) se for usar domínio, para evitar conflito.
-    # O Traefik acessa a porta interna (80) diretamente.
-    expose:
-      - "80"
-      - "25"
-    labels:
-      - "traefik.enable=true"
-      # Define que este container responde EXCLUSIVAMENTE por este domínio
-      - "traefik.http.routers.smtp4dev.rule=Host(`airflowsmtp4dev.vps.avaliadoc.com.br`)"
-      # Define que a porta para a Interface Web é a 80 (não a 25)
-      - "traefik.http.services.smtp4dev.loadbalancer.server.port=80"
-      # Configurações padrão do Coolify para HTTPS (entrypoint https/websecure)
-      - "traefik.http.routers.smtp4dev.entrypoints=websecure"
-      - "traefik.http.routers.smtp4dev.tls.certresolver=letsencrypt"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 30s
-      retries: 3  
 
 volumes:
   postgres_data:

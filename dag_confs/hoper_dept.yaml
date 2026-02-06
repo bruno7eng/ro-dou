@@ -10,7 +10,7 @@ dag:
   schedule: "*/30 2-23 * * MON-FRI"
   callback:
     on_failure_callback:
-      - seu.email@exemplo.com
+      - contato@avaliadoc.com
   # No Ro-DOU, 'search' é uma lista. Cada item da lista é um bloco de busca.
   search:
     header: Regulação MEC (Departamento)
@@ -194,7 +194,7 @@ dag:
   report:
     # Configure seu e-mail aqui
     emails:
-      - seu.email@exemplo.com
+      - contato@avaliadoc.com
     attach_csv: True
     subject: Relatório Diário - Hoper/MEC
-    webhook_url: "https://n8n.vps.avaliadoc.com.br/webhook-test/22a537f5-7b44-46e2-b7b4-2fc47b1112ed"
+    webhook_url: "https://n8n.vps.avaliadoc.com.br/webhook/22a537f5-7b44-46e2-b7b4-2fc47b1112ed"

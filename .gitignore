@@ -140,3 +140,4 @@ test_notrack/
 # **/dag_confs/**/*.yaml
 # Ignora qualquer arquivo que termine em _bck.yaml dentro de dag_confs
 dag_confs/**/*_bck.yaml
+gm_data.env
